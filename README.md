@@ -36,7 +36,6 @@ go build -o ai-bot.exe
 -  **Всеми доступными моделями**
 -  **Настройкой системного промпта**
 
-![Model Selection](img/model-selection.png)
 
 ### 3. Запуск
 
@@ -63,7 +62,6 @@ go build -o ai-bot.exe
         data-custom-css=".ai-chat-toggle{border:3px solid gold;}"></script>
 ```
 
-![Custom Theme](img/custom-theme.png)
 
 ### Системный промпт
 
@@ -72,7 +70,6 @@ go build -o ai-bot.exe
         data-system-prompt="Ты дружелюбный помощник программиста. Объясняй код простыми словами и добавляй эмодзи."></script>
 ```
 
-![Programming Assistant](img/programming-assistant.png)
 
 ### Полная кастомизация
 
