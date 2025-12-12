@@ -1,6 +1,6 @@
 # AI Bot - Современный чат-виджет с AI
 
-![AI Bot Demo](img/bot.png)
+![AI Bot Demo](img/bot.png =100x20)
 
 Современное Golang приложение для интеграции AI чата на любой веб-сайт. Поддерживает OpenRouter и OpenAI API с красивым перетаскиваемым виджетом.
 
