@@ -22,6 +22,12 @@ go.work
 # Environment variables
 .env
 
+# Build artifacts
+releases/
+temp/
+*.zip
+*.tar.gz
+
 # IDE
 .idea/
 .vscode/
