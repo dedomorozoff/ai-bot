@@ -176,7 +176,6 @@ const status = await fetch('/api/status').then(r => r.json());
 - **`/demo-custom`** - красная кастомная тема  
 - **`/demo-prompt`** - программист-помощник с кастомным промптом
 
-![Demo Pages](img/demo-pages.png)
 
 ##  Примеры системных промптов
 
