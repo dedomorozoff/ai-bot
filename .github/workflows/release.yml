@@ -11,6 +11,10 @@ on:
         required: true
         default: 'v1.0.0'
 
+permissions:
+  contents: write
+  packages: write
+
 jobs:
   build:
     name: Build releases
@@ -184,26 +188,23 @@ jobs:
         ls -la
         
     - name: Create Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: softprops/action-gh-release@v2
       with:
         tag_name: ${{ steps.version.outputs.VERSION }}
-        release_name: AI Bot ${{ steps.version.outputs.VERSION }}
+        name: AI Bot ${{ steps.version.outputs.VERSION }}
         body: |
           ## AI Bot ${{ steps.version.outputs.VERSION }}
           
           ### 📦 Скачать релиз:
           
           **Windows:**
-          - [ai-bot-windows-amd64.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-windows-amd64.zip) - Windows 64-bit
+          - [ai-bot-windows-amd64.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-windows-amd64.zip) - Windows 64-bit (рекомендуется)
           - [ai-bot-windows-386.zip](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-windows-386.zip) - Windows 32-bit
           
           **Linux:**
-          - [ai-bot-linux-amd64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-linux-amd64.tar.gz) - Linux 64-bit
+          - [ai-bot-linux-amd64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-linux-amd64.tar.gz) - Linux 64-bit (рекомендуется)
           - [ai-bot-linux-386.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-linux-386.tar.gz) - Linux 32-bit
-          - [ai-bot-linux-arm64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-linux-arm64.tar.gz) - Linux ARM64
+          - [ai-bot-linux-arm64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-linux-arm64.tar.gz) - Linux ARM64 (Raspberry Pi 4+)
           
           **FreeBSD:**
           - [ai-bot-freebsd-amd64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-freebsd-amd64.tar.gz) - FreeBSD 64-bit
@@ -211,127 +212,48 @@ jobs:
           
           **macOS:**
           - [ai-bot-darwin-amd64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-darwin-amd64.tar.gz) - macOS Intel
-          - [ai-bot-darwin-arm64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-darwin-arm64.tar.gz) - macOS Apple Silicon
+          - [ai-bot-darwin-arm64.tar.gz](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/ai-bot-darwin-arm64.tar.gz) - macOS Apple Silicon (M1/M2/M3)
           
           ### 🚀 Быстрый старт:
           
-          1. Скачайте архив для вашей платформы
+          #### Windows:
+          1. Скачайте ai-bot-windows-amd64.zip
           2. Распакуйте архив
-          3. Запустите конфигурацию: `./ai-bot --config` (или `ai-bot.exe --config` на Windows)
-          4. Запустите бот: `./ai-bot` (или `ai-bot.exe` на Windows)
+          3. Запустите install.bat или:
+             ```cmd
+             ai-bot.exe --config
+             ai-bot.exe
+             ```
           
-          ### 📋 Контрольные суммы:
+          #### Linux/macOS/FreeBSD:
+          1. Скачайте архив для вашей платформы
+          2. Распакуйте: `tar -xzf ai-bot-*.tar.gz`
+          3. Запустите: `./install.sh` или:
+             ```bash
+             chmod +x ai-bot
+             ./ai-bot --config
+             ./ai-bot
+             ```
+          
+          ### 📋 Что включено в каждый архив:
+          
+          - **ai-bot** - исполняемый файл
+          - **README.md** - основная документация
+          - **USAGE.md** - руководство по использованию
+          - **.env.example** - пример конфигурации
+          - **install** скрипт для быстрой установки
+          
+          ### 🔐 Контрольные суммы:
           
           Проверьте целостность файлов с помощью [checksums.txt](https://github.com/${{ github.repository }}/releases/download/${{ steps.version.outputs.VERSION }}/checksums.txt)
+          
+          ```bash
+          sha256sum -c checksums.txt
+          ```
+        files: |
+          releases/*.zip
+          releases/*.tar.gz
+          releases/checksums.txt
+          releases/README.txt
         draft: false
         prerelease: false
-        
-    - name: Upload Windows amd64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-windows-amd64.zip
-        asset_name: ai-bot-windows-amd64.zip
-        asset_content_type: application/zip
-        
-    - name: Upload Windows 386
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-windows-386.zip
-        asset_name: ai-bot-windows-386.zip
-        asset_content_type: application/zip
-        
-    - name: Upload Linux amd64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-linux-amd64.tar.gz
-        asset_name: ai-bot-linux-amd64.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload Linux 386
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-linux-386.tar.gz
-        asset_name: ai-bot-linux-386.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload Linux ARM64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-linux-arm64.tar.gz
-        asset_name: ai-bot-linux-arm64.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload FreeBSD amd64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-freebsd-amd64.tar.gz
-        asset_name: ai-bot-freebsd-amd64.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload FreeBSD 386
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-freebsd-386.tar.gz
-        asset_name: ai-bot-freebsd-386.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload macOS amd64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-darwin-amd64.tar.gz
-        asset_name: ai-bot-darwin-amd64.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload macOS ARM64
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/ai-bot-darwin-arm64.tar.gz
-        asset_name: ai-bot-darwin-arm64.tar.gz
-        asset_content_type: application/gzip
-        
-    - name: Upload checksums
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/checksums.txt
-        asset_name: checksums.txt
-        asset_content_type: text/plain
-        
-    - name: Upload README
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./releases/README.txt
-        asset_name: README.txt
-        asset_content_type: text/plain
